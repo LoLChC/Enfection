@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kızıl Hastalığı – Eğitim Oyunları</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#0f0f0f; color:#eee; margin:0; padding:20px; }
+    h1, h2 { color:#ff5252; }
+    .menu, .game { max-width:900px; margin:auto; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:15px; }
+    .card { background:#1e1e1e; padding:20px; border-radius:10px; cursor:pointer; text-align:center; }
+    .card:hover { background:#ff5252; }
+    button { width:100%; padding:10px; margin:6px 0; border:none; border-radius:6px; background:#333; color:#fff; cursor:pointer; }
+    button:hover { background:#ff5252; }
+    .hidden { display:none; }
+    .result { margin-top:10px; font-weight:bold; }
+  </style>
+</head>
+<body>
+
+<div class="menu" id="menu">
+  <h1>Kızıl Hastalığı – 10 Eğitim Oyunu</h1>
+  <div class="grid" id="gameList"></div>
+</div>
+
+<div class="game hidden" id="game">
+  <h2 id="gameTitle"></h2>
+  <div id="question"></div>
+  <div id="answers"></div>
+  <div id="result" class="result"></div>
+</div>
+
+<script>
+// 10 oyun, her birinde 10 soru (örnek soru havuzu – mantık birebir aynı)
+const games = Array.from({length:10}, (_,g)=>({
+  title:`Oyun ${g+1}`,
+  questions:Array.from({length:10},(_,i)=>({
+    q:`Oyun ${g+1} – Soru ${i+1}: Kızıl hastalığı hangi etkenle oluşur?`,
+    a:["Virüs","Bakteri","Mantar","Alerji"],
+    c:1,
+    info:"Kızıl hastalığı streptokok bakterisiyle oluşur."
+  }))
+}));
+
+const menu = document.getElementById('menu');
+const gameDiv = document.getElementById('game');
+const gameList = document.getElementById('gameList');
+let gIndex=0, qIndex=0;
+
+// Menü oluştur
+
+games.forEach((g,i)=>{
+  const div=document.createElement('div');
+  div.className='card';
+  div.innerText=g.title;
+  div.onclick=()=>startGame(i);
+  gameList.appendChild(div);
+});
+
+function startGame(i){
+  gIndex=i; qIndex=0;
+  menu.classList.add('hidden');
+  gameDiv.classList.remove('hidden');
+  document.getElementById('gameTitle').innerText=games[gIndex].title;
+  loadQuestion();
+}
+
+function loadQuestion(){
+  const q=games[gIndex].questions[qIndex];
+  document.getElementById('question').innerText=q.q;
+  const aDiv=document.getElementById('answers');
+  aDiv.innerHTML='';
+  document.getElementById('result').innerText='';
+  q.a.forEach((t,i)=>{
+    const b=document.createElement('button');
+    b.innerText=t;
+    b.onclick=()=>answer(i);
+    aDiv.appendChild(b);
+  });
+}
+
+function answer(i){
+  const q=games[gIndex].questions[qIndex];
+  document.getElementById('result').innerText=(i===q.c?"Doğru! ":"Yanlış! ")+q.info;
+  qIndex++;
+  if(qIndex<10) setTimeout(loadQuestion,1500);
+  else setTimeout(()=>{gameDiv.classList.add('hidden'); menu.classList.remove('hidden');},2000);
+}
+</script>
+</body>
+</html>
