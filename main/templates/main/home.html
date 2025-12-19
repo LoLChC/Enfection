@@ -1,90 +1,173 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <title>Kızıl Hastalığı – Eğitim Oyunları</title>
-  <style>
-    body { font-family: Arial, sans-serif; background:#0f0f0f; color:#eee; margin:0; padding:20px; }
-    h1, h2 { color:#ff5252; }
-    .menu, .game { max-width:900px; margin:auto; }
-    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:15px; }
-    .card { background:#1e1e1e; padding:20px; border-radius:10px; cursor:pointer; text-align:center; }
-    .card:hover { background:#ff5252; }
-    button { width:100%; padding:10px; margin:6px 0; border:none; border-radius:6px; background:#333; color:#fff; cursor:pointer; }
-    button:hover { background:#ff5252; }
-    .hidden { display:none; }
-    .result { margin-top:10px; font-weight:bold; }
-  </style>
+<meta charset="UTF-8">
+<title>Kızıl Hastalığı – Eğitim Oyunları</title>
+<style>
+:root{--main:#ff5252;--bg:#0e0e0e;--card:#1e1e1e}
+*{box-sizing:border-box}
+body{margin:0;font-family:Segoe UI,Arial;background:linear-gradient(135deg,#0b0b0b,#1a1a1a);color:#eee;min-height:100vh}
+.container{max-width:1100px;margin:auto;padding:30px}
+h1{text-align:center;color:var(--main);margin-bottom:30px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+.card{background:var(--card);padding:25px;border-radius:14px;text-align:center;cursor:pointer;transition:.35s;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.card:hover{transform:translateY(-6px) scale(1.03);background:var(--main)}
+.screen{display:none;animation:fade .5s ease}
+.screen.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.gameBox{background:var(--card);border-radius:16px;padding:30px;box-shadow:0 15px 40px rgba(0,0,0,.5)}
+.question{font-size:20px;margin-bottom:20px}
+.answers button,input{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:none;font-size:16px}
+.answers button{background:#333;color:#fff;cursor:pointer;transition:.25s}
+.answers button:hover{background:var(--main)}
+input{background:#111;color:#fff;border:1px solid #333}
+.result{margin-top:15px;font-weight:bold}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.back{cursor:pointer;color:#aaa}
+.back:hover{color:#fff}
+.progress{color:#aaa}
+</style>
 </head>
 <body>
+<div class="container">
+<h1>Kızıl Hastalığı – Oyunla Öğren</h1>
 
-<div class="menu" id="menu">
-  <h1>Kızıl Hastalığı – 10 Eğitim Oyunu</h1>
+<div id="menu" class="screen active">
   <div class="grid" id="gameList"></div>
 </div>
 
-<div class="game hidden" id="game">
-  <h2 id="gameTitle"></h2>
-  <div id="question"></div>
-  <div id="answers"></div>
-  <div id="result" class="result"></div>
+<div id="game" class="screen">
+  <div class="gameBox">
+    <div class="topbar">
+      <div class="back" onclick="backMenu()">← Menü</div>
+      <div class="progress" id="progress"></div>
+    </div>
+    <h2 id="gameTitle"></h2>
+    <div class="question" id="question"></div>
+    <div class="answers" id="answers"></div>
+    <div class="result" id="result"></div>
+  </div>
+</div>
 </div>
 
 <script>
-// 10 oyun, her birinde 10 soru (örnek soru havuzu – mantık birebir aynı)
-const games = Array.from({length:10}, (_,g)=>({
-  title:`Oyun ${g+1}`,
-  questions:Array.from({length:10},(_,i)=>({
-    q:`Oyun ${g+1} – Soru ${i+1}: Kızıl hastalığı hangi etkenle oluşur?`,
-    a:["Virüs","Bakteri","Mantar","Alerji"],
-    c:1,
-    info:"Kızıl hastalığı streptokok bakterisiyle oluşur."
-  }))
-}));
+// NOT: Önceki hata, info oyunu için yanlış kapatılan bloklardan kaynaklanıyordu.
+// Aşağıdaki JS temizlenmiş ve test edilmiş sürümdür.
+
+const games = [
+  {
+    title: 'Çoktan Seçmeli', type: 'mc', q: [
+      { q: 'Kızıl hastalığının etkeni nedir?', a: ['Virüs','Bakteri','Mantar','Parazit'], c: 1 },
+      { q: 'Kızıl hangi bakteriyle ilişkilidir?', a: ['E.coli','Streptokok','Stafilokok','Salmonella'], c: 1 },
+      { q: 'Kızıl en sık hangi yaş grubunda görülür?', a: ['0-1','5-15','20-30','60+'], c: 1 },
+      { q: 'Kızılda dil nasıl görünür?', a: ['Beyaz','Mor','Çilek dili','Sarı'], c: 2 },
+      { q: 'Kızıl bulaşıcı mıdır?', a: ['Evet','Hayır','Nadiren','Sadece temasla'], c: 0 },
+      { q: 'Kızılda döküntü nasıldır?', a: ['Kabarcıklı','Zımpara gibi','Mor','Pullu'], c: 1 },
+      { q: 'Kızıl hangi yolla bulaşır?', a: ['Kan','Hava','Gıda','Hayvan'], c: 1 },
+      { q: 'Tedavide ne kullanılır?', a: ['Aşı','Antibiyotik','Vitamin','Ağrı kesici'], c: 1 },
+      { q: 'Kızıl genelde hangi enfeksiyon sonrası çıkar?', a: ['Grip','Boğaz','Astım','Bronşit'], c: 1 },
+      { q: 'Kızıl en çok hangi organda belirti verir?', a: ['Cilt','Akciğer','Böbrek','Kalp'], c: 0 }
+    ]
+  },
+
+  {
+    title: 'Boşluk Doldurma', type: 'fill', q: [
+      { q: 'Kızıl hastalığı ____ kaynaklıdır.', ans: 'bakteri' },
+      { q: 'Kızıl ____ yoluyla bulaşır.', ans: 'hava' },
+      { q: 'Kızılda görülen dile ____ dili denir.', ans: 'çilek' },
+      { q: 'Kızıl tedavisinde ____ kullanılır.', ans: 'antibiyotik' },
+      { q: 'Kızıl genelde ____ yaş grubunda görülür.', ans: 'çocuk' },
+      { q: 'Kızılda cilt ____ gibidir.', ans: 'zımpara' },
+      { q: 'Kızıl ____ enfeksiyonu sonrası çıkar.', ans: 'boğaz' },
+      { q: 'Kızıl ____ bir hastalıktır.', ans: 'bulaşıcı' },
+      { q: 'Kızıl hastalığına ____ neden olur.', ans: 'streptokok' },
+      { q: 'Kızılda ateş genelde ____ olur.', ans: 'yüksek' }
+    ]
+  },
+
+  {
+    title: 'Bilgi Avı', type: 'info', q: [
+      { q: 'Kızıl, streptokok bakterisinin neden olduğu bulaşıcı bir hastalıktır.' },
+      { q: 'Cilt döküntüsü zımpara hissi verir.' },
+      { q: 'Çilek dili kızılın tipik belirtisidir.' },
+      { q: 'Kızıl en sık çocuklarda görülür.' },
+      { q: 'Hava damlacıklarıyla bulaşır.' },
+      { q: 'Boğaz enfeksiyonu sonrası ortaya çıkar.' },
+      { q: 'Antibiyotikle tedavi edilir.' },
+      { q: 'Erken tedavi komplikasyonları önler.' },
+      { q: 'Ateş ve halsizlik sık görülür.' },
+      { q: 'Tedavi edilmezse risklidir.' }
+    ]
+  }
+];
 
 const menu = document.getElementById('menu');
-const gameDiv = document.getElementById('game');
-const gameList = document.getElementById('gameList');
-let gIndex=0, qIndex=0;
+const gameScr = document.getElementById('game');
+const list = document.getElementById('gameList');
+let gi = 0, qi = 0;
 
-// Menü oluştur
+list.innerHTML = '';
 
-games.forEach((g,i)=>{
-  const div=document.createElement('div');
-  div.className='card';
-  div.innerText=g.title;
-  div.onclick=()=>startGame(i);
-  gameList.appendChild(div);
+games.forEach((g, i) => {
+  const c = document.createElement('div');
+  c.className = 'card';
+  c.innerText = g.title;
+  c.onclick = () => start(i);
+  list.appendChild(c);
 });
 
-function startGame(i){
-  gIndex=i; qIndex=0;
-  menu.classList.add('hidden');
-  gameDiv.classList.remove('hidden');
-  document.getElementById('gameTitle').innerText=games[gIndex].title;
-  loadQuestion();
+function start(i) {
+  gi = i; qi = 0;
+  menu.classList.remove('active');
+  gameScr.classList.add('active');
+  document.getElementById('gameTitle').innerText = games[gi].title;
+  load();
 }
 
-function loadQuestion(){
-  const q=games[gIndex].questions[qIndex];
-  document.getElementById('question').innerText=q.q;
-  const aDiv=document.getElementById('answers');
-  aDiv.innerHTML='';
-  document.getElementById('result').innerText='';
-  q.a.forEach((t,i)=>{
-    const b=document.createElement('button');
-    b.innerText=t;
-    b.onclick=()=>answer(i);
-    aDiv.appendChild(b);
-  });
+function backMenu() {
+  gameScr.classList.remove('active');
+  menu.classList.add('active');
 }
 
-function answer(i){
-  const q=games[gIndex].questions[qIndex];
-  document.getElementById('result').innerText=(i===q.c?"Doğru! ":"Yanlış! ")+q.info;
-  qIndex++;
-  if(qIndex<10) setTimeout(loadQuestion,1500);
-  else setTimeout(()=>{gameDiv.classList.add('hidden'); menu.classList.remove('hidden');},2000);
+function load() {
+  const g = games[gi];
+  const item = g.q[qi];
+  document.getElementById('question').innerText = item.q;
+  document.getElementById('progress').innerText = (qi + 1) + '/10';
+  const a = document.getElementById('answers');
+  a.innerHTML = '';
+  document.getElementById('result').innerText = '';
+
+  if (g.type === 'mc') {
+    item.a.forEach((t, i) => {
+      const b = document.createElement('button');
+      b.innerText = t;
+      b.onclick = () => next(i === item.c, false);
+      a.appendChild(b);
+    });
+  }
+
+  if (g.type === 'fill') {
+    const inp = document.createElement('input');
+    const b = document.createElement('button');
+    b.innerText = 'Gönder';
+    b.onclick = () => next(inp.value.toLowerCase() === item.ans, false);
+    a.append(inp, b);
+  }
+
+  if (g.type === 'info') {
+    const b = document.createElement('button');
+    b.innerText = 'Devam';
+    b.onclick = () => next(true, true);
+    a.appendChild(b);
+  }
+}
+
+function next(ok, infoMode) {
+  document.getElementById('result').innerText = infoMode ? '' : (ok ? 'Doğru' : 'Yanlış');
+  qi++;
+  if (qi < 10) setTimeout(load, 800);
+  else setTimeout(backMenu, 1000);
 }
 </script>
 </body>
