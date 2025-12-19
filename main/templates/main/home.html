@@ -4,28 +4,219 @@
 <meta charset="UTF-8">
 <title>Kızıl Hastalığı – Eğitim Oyunları</title>
 <style>
-:root{--main:#ff5252;--bg:#0e0e0e;--card:#1e1e1e}
-*{box-sizing:border-box}
-body{margin:0;font-family:Segoe UI,Arial;background:linear-gradient(135deg,#0b0b0b,#1a1a1a);color:#eee;min-height:100vh}
-.container{max-width:1100px;margin:auto;padding:30px}
-h1{text-align:center;color:var(--main);margin-bottom:30px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
-.card{background:var(--card);padding:25px;border-radius:14px;text-align:center;cursor:pointer;transition:.35s;box-shadow:0 10px 30px rgba(0,0,0,.4)}
-.card:hover{transform:translateY(-6px) scale(1.03);background:var(--main)}
-.screen{display:none;animation:fade .5s ease}
-.screen.active{display:block}
-@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.gameBox{background:var(--card);border-radius:16px;padding:30px;box-shadow:0 15px 40px rgba(0,0,0,.5)}
-.question{font-size:20px;margin-bottom:20px}
-.answers button,input{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:none;font-size:16px}
-.answers button{background:#333;color:#fff;cursor:pointer;transition:.25s}
-.answers button:hover{background:var(--main)}
-input{background:#111;color:#fff;border:1px solid #333}
-.result{margin-top:15px;font-weight:bold}
-.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.back{cursor:pointer;color:#aaa}
-.back:hover{color:#fff}
-.progress{color:#aaa}
+:root {
+    --primary: #2c3e50;       /* Ciddi tıbbi lacivert */
+    --accent: #e74c3c;        /* Kızıl hastalığı vurgusu için kırmızı */
+    --secondary: #3498db;     /* Güven veren mavi */
+    --bg: #f4f7f6;            /* Göz yormayan açık gri/mavi arka plan */
+    --card-bg: #ffffff;
+    --text: #333333;
+    --success: #27ae60;
+    --shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg);
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(52, 152, 219, 0.05) 0, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(231, 76, 60, 0.05) 0, transparent 50%);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+    width: 100%;
+}
+
+h1 {
+    text-align: center;
+    color: var(--primary);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 40px;
+    border-bottom: 3px solid var(--accent);
+    display: table;
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 10px;
+}
+
+/* Menü Kartları */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+.card {
+    background: var(--card-bg);
+    padding: 40px 20px;
+    border-radius: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(0,0,0,0.05);
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: var(--primary);
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+    border-color: var(--secondary);
+    color: var(--secondary);
+}
+
+/* Oyun Ekranı */
+.gameBox {
+    background: var(--card-bg);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(0,0,0,0.03);
+    position: relative;
+    overflow: hidden;
+}
+
+.gameBox::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 6px;
+    background: linear-gradient(90deg, var(--secondary), var(--accent));
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+}
+
+.back {
+    cursor: pointer;
+    color: var(--secondary);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.back:hover {
+    text-decoration: underline;
+}
+
+.progress {
+    background: var(--bg);
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: var(--primary);
+}
+
+#gameTitle {
+    color: var(--primary);
+    font-size: 1.5rem;
+    margin-bottom: 25px;
+}
+
+.question {
+    font-size: 1.3rem;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    color: #444;
+    font-weight: 500;
+}
+
+/* Butonlar ve Girdiler */
+.answers button {
+    width: 100%;
+    padding: 16px;
+    margin: 10px 0;
+    border-radius: 12px;
+    border: 2px solid #edf2f7;
+    background: #fff;
+    color: var(--primary);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+}
+
+.answers button:hover {
+    border-color: var(--secondary);
+    background: #f8fbff;
+    transform: translateX(5px);
+}
+
+input {
+    width: 100%;
+    padding: 15px;
+    border-radius: 12px;
+    border: 2px solid #edf2f7;
+    background: #fdfdfd;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    outline: none;
+}
+
+input:focus {
+    border-color: var(--secondary);
+}
+
+/* Sonuç ve Animasyon */
+.result {
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.screen {
+    display: none;
+    animation: slideUp 0.4s ease-out;
+}
+
+.screen.active {
+    display: block;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Bilgi Avı için özel buton */
+#answers button:only-child {
+    background: var(--secondary);
+    color: white;
+    text-align: center;
+    border: none;
+}
+
+#answers button:only-child:hover {
+    background: var(--primary);
+}
 </style>
 </head>
 <body>
