@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Trikinoz Vaka İncelemesi</title>
+
+<style>
+    :root{
+        --bg:#0b1020;
+        --text:#e5e7eb;
+
+        --red:#ff4d6d;
+        --orange:#ff9f1c;
+        --yellow:#ffd60a;
+        --green:#2dd4bf;
+        --blue:#4dabf7;
+        --purple:#b517ff;
+        --pink:#ff5c8a;
+        --teal:#06d6a0;
+    }
+
+    body{
+        margin:0;
+        font-family:system-ui, Arial;
+        background:white
+        color:var(--text);
+    }
+
+    header{
+        text-align:center;
+        padding:28px;
+        background:linear-gradient(90deg,var(--purple),var(--blue),var(--teal));
+        color:white;
+        font-weight:800;
+        letter-spacing:1px;
+    }
+
+    header p{
+        margin:6px 0 0;
+        font-size:13px;
+        opacity:0.9;
+    }
+
+    .container{
+        max-width:950px;
+        margin:30px auto;
+        padding:0 18px;
+    }
+
+    .card{
+        padding:18px;
+        border-radius:14px;
+        margin-bottom:14px;
+        color:#0b1020;
+        font-weight:500;
+        box-shadow:0 12px 30px rgba(0,0,0,0.35);
+    }
+
+    .title{
+        font-size:18px;
+        font-weight:800;
+        margin-bottom:8px;
+    }
+
+    .text{
+        font-size:14px;
+        line-height:1.6;
+    }
+
+    .tag{
+        margin-top:10px;
+        display:inline-block;
+        padding:6px 10px;
+        border-radius:10px;
+        background:rgba(255,255,255,0.4);
+        font-weight:700;
+    }
+
+    /* RENK BLOKLARI */
+    .c1{ background:linear-gradient(135deg,var(--red),#ffb3c1); }
+    .c2{ background:linear-gradient(135deg,var(--orange),#ffd6a5); }
+    .c3{ background:linear-gradient(135deg,var(--yellow),#fff3b0); }
+    .c4{ background:linear-gradient(135deg,var(--green),#a7f3d0); }
+    .c5{ background:linear-gradient(135deg,var(--blue),#bde0fe); }
+    .c6{ background:linear-gradient(135deg,var(--purple),#e0aaff); }
+    .c7{ background:linear-gradient(135deg,var(--pink),#ffc6ff); }
+
+    .grid{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:10px;
+        margin-top:10px;
+    }
+
+    @media(max-width:800px){
+        .grid{grid-template-columns:1fr;}
+    }
+
+    .box{
+        background:rgba(255,255,255,0.35);
+        padding:10px;
+        border-radius:10px;
+        font-weight:600;
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    KLİNİK VAKA İNCELEMESİ
+    <p>Trikinoz (Trichinellosis) – renkli klinik analiz</p>
+</header>
+
+<div class="container">
+
+    <div class="card c1">
+        <div class="title">HASTA BAŞVURUSU</div>
+        <div class="text">
+            24 yaş erkek hasta. Az pişmiş domuz eti tükettikten birkaç gün sonra ateş ve kas ağrıları ile başvuruyor.
+        </div>
+        <div class="tag">Risk: Kontamine et tüketimi</div>
+    </div>
+
+    <div class="card c2">
+        <div class="title">İLK SEMPTOMLAR</div>
+        <div class="text">
+            Başlangıçta mide-bağırsak şikayetleri, ardından hızla gelişen kas ağrısı, halsizlik ve yüz şişliği.
+        </div>
+        <div class="tag">Sistemik yayılım şüphesi</div>
+    </div>
+
+    <div class="card c3">
+        <div class="title">KLİNİK BULGULAR</div>
+        <div class="text">
+            Ateş, periorbital ödem, baldır ve çiğneme kaslarında şiddetli ağrı.
+        </div>
+        <div class="tag">Kas tutulumu belirgin</div>
+    </div>
+
+    <div class="card c4">
+        <div class="title">LABORATUVAR</div>
+
+        <div class="grid">
+            <div class="box">Eozinofil ↑ (%18)</div>
+            <div class="box">CK ↑ (Kas hasarı)</div>
+            <div class="box">CRP ↑</div>
+            <div class="box">Lökosit ↑</div>
+        </div>
+    </div>
+
+    <div class="card c5">
+        <div class="title">KLİNİK YORUM</div>
+        <div class="text">
+            Parazitik enfeksiyon lehine güçlü bulgular. Kas + eozinofili kombinasyonu viral/bakteriyelden ayrılır.
+        </div>
+        <div class="tag">Ön tanı: Trichinellosis</div>
+    </div>
+
+    <div class="card c6">
+        <div class="title">PATOGENEZ</div>
+        <div class="text">
+            Larvalar bağırsakta açılır → kana geçer → çizgili kaslara yerleşir → inflamasyon ve kas yıkımı oluşturur.
+        </div>
+    </div>
+
+    <div class="card c7">
+        <div class="title">TANI & TEDAVİ</div>
+        <div class="text">
+            ELISA serolojisi ve kas biyopsisi ile doğrulanır.<br><br>
+            Albendazol / mebendazol + ağır vakalarda kortikosteroid.
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
